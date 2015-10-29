@@ -8,5 +8,7 @@ public class TestMain {
 		System.out.println("aaaaa");
 		System.out.println(12);
 		Good.getId();
+		Good.getId();
+		Good.getId();
 	}
 }
