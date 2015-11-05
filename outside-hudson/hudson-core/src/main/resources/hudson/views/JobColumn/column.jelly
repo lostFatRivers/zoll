@@ -1,0 +1,50 @@
+<!-- **************************************************************************
+#
+# Copyright  (c) 2004-2009 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Martin Eigenbrodt
+#        
+#
+#************************************************************************** --> 
+
+
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form" xmlns:i="jelly:fmt">
+    <td class="jobDescription"
+        style="${indenter.getCss(job)}"
+        onmouseover="this.className='jobDescription hover';return true;"
+        onmouseout="this.className='jobDescription';return true;">
+        <j:if test="${h.isBrokenItem(job)}">
+            <a class="redbold" href="#${job.displayName}">${job.displayName}</a>
+        </j:if>
+
+        <j:if test="${!h.isBrokenItem(job)}">
+            <a href="${jobBaseUrl}${job.shortUrl}">${job.displayName}</a>
+        </j:if>
+        <j:if test="${!empty(job.description)}">
+            <div class="jobDescriptionDetails">
+                <table border="0">
+                    <thead>
+                        <tr>
+                            <th>${%Description}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <j:out value="${app.markupFormatter.translate(job.description)}"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </j:if>
+    </td>
+</j:jelly>

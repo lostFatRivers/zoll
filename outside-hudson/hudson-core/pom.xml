@@ -1,0 +1,812 @@
+<!-- **************************************************************************
+#
+# Copyright (c) 2004-2012 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#
+#   Kohsuke Kawaguchi, Winston Prakash
+#
+#************************************************************************** -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.eclipse.hudson</groupId>
+        <artifactId>hudson-parent</artifactId>
+        <version>3.3.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>hudson-core</artifactId>
+    <version>3.3.1-SNAPSHOT</version>
+    <name>Hudson :: Core</name>
+    <description>
+        Contains the core Hudson code and view files to render HTML.
+    </description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!-- Just compile only the Annotation Processor Classes first -->
+                        <id>default-compile</id>
+                        <configuration>
+                            <compilerArgument>-proc:none</compilerArgument>
+                            <includes>
+                                <include>hudson/PluginMarkerAPT6.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>compile-everything-else</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.hudson.tools</groupId>
+                <artifactId>maven-encoding-plugin</artifactId>
+                <version>${maven-encoding-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check-encoding</goal>
+                        </goals>
+                        <phase>compile</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.hudsonci.stapler</groupId>
+                <artifactId>maven-stapler-plugin</artifactId>
+                <version>${maven-stapler-plugin.version}</version>
+                <configuration>
+                    <fork>${staplerFork}</fork>
+                    <!-- the source code is big enough now that otherwise it fails with OutOfMemoryError -->
+                    <maxmem>128m</maxmem>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jvnet.localizer</groupId>
+                <artifactId>maven-localizer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr3-maven-plugin</artifactId>
+                <version>${antlr.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--TODO  Use the maven-dependency-plugin -->
+            <plugin>
+                <groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+                <artifactId>maven-antrun-extended-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <tasks>
+                                <mkdir dir="target/classes/windows-service" />
+                                <resolveArtifact artifactId="winsw" tofile="target/classes/windows-service/hudson.exe" />
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- set main class -->
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>hudson.Main</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix />
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!--
+                  Configuration for generating Wiki page.
+                  This kicks in with the release profile, or by manually running "mvn apt:process"
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+                <version>${apt-maven-plugin.version}</version>
+                <configuration>
+                    <force>true</force>
+                    <!-- disable staleness check -->
+                    <factory>org.jvnet.hudson.tools.ExtensionPointListerFactory</factory>
+                    <options>
+                        <option>page=Extension points</option>
+                        <option>target=${project.basedir}/target/extension-points.wiki</option>
+                    </options>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.hudson.tools</groupId>
+                        <artifactId>extension-point-lister</artifactId>
+                        <version>1.7</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>com.sun</groupId>
+                                <artifactId>tools</artifactId>
+                            </exclusion>
+                            <exclusion>
+                                <groupId>commons-logging</groupId>
+                                <artifactId>commons-logging</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.2</version>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <!-- generate Jelly tag lib documentation -->
+                            <groupId>org.hudsonci.stapler</groupId>
+                            <artifactId>maven-stapler-plugin</artifactId>
+                            <version>${maven-stapler-plugin.version}</version>
+                            <configuration>
+                                <patterns>
+                                    <pattern>/lib/.*</pattern>
+                                </patterns>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.6</version>
+                            <configuration>
+                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                            </configuration>
+                            <!-- simpler configuration without reportSets available for usual cases -->
+                            <reports>
+                                <report>dependencies</report>
+                            </reports>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>2.9</version>
+                            <configuration>
+                                <!--
+                                <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                                -->
+                                <show>public</show>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>debug</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <!-- for releases, just use the POM version. See above ant-run plugin for how this gets used. -->
+                <build.version>${project.version}</build.version>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin><!-- execute apt:process for "Extension points" Wiki page generation -->
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>apt-maven-plugin</artifactId>
+                        <version>${apt-maven-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>process</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <!--
+                          generate jelly taglib docs from src/main/resoruces.
+                          this is necessary in addition to the <reporting> configuration
+                          to get the results deployed.
+                        -->
+                        <groupId>org.hudsonci.stapler</groupId>
+                        <artifactId>maven-stapler-plugin</artifactId>
+                        <version>${maven-stapler-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>jelly-taglibdoc</goal>
+                                </goals>
+                                <configuration>
+                                    <patterns>
+                                        <pattern>/lib/.*</pattern>
+                                    </patterns>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- run FindBugs for better error detection -->
+            <id>findbugs</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Normal</threshold>
+                            <onlyAnalyze>hudson.-</onlyAnalyze>
+                            <excludeFilterFile>src/findbugs-filter.xml</excludeFilterFile>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+        <profile>
+            <id>hudson</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>cobertura-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>pmd</id>
+            <!--
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <targetJdk>1.5</targetJdk>
+                            <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
+                            <targetDirectory>${project.build.directory}</targetDirectory>
+                            <excludeRoots>
+                                <excludeRoot>${basedir}/target/generated-sources/</excludeRoot>
+                            </excludeRoots>
+                            <rulesets>
+                                <!--http://pmd.sourceforge.net/rules/index.html#Basic_Rules-->
+                                <!--<ruleset>/rulesets/basic.xml</ruleset>-->
+                                <!--http://pmd.sourceforge.net/rules/index.html#Unused_Code_Rules-->
+                                <!--<ruleset>/rulesets/unusedcode.xml</ruleset>-->
+                                <ruleset>/rulesets/imports.xml</ruleset>
+                                <!--http://pmd.sourceforge.net/rules/index.html#Braces_Rules-->
+                                <!--<ruleset>/rulesets/braces.xml</ruleset>-->
+                                <!--http://pmd.sourceforge.net/rules/index.html#Naming_Rules-->
+                                <!--<ruleset>/rulesets/naming.xml</ruleset>-->
+                            </rulesets>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                    <!--<goal>cpd-check</goal>-->
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse.hudson</groupId>
+            <artifactId>hudson-remoting</artifactId>
+            <version>${hudson-remoting.version}</version>
+        </dependency>
+        <!-- Why does the core depend on the CLI? -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>hudson-cli</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jruby.ext.posix</groupId>
+            <artifactId>jna-posix</artifactId>
+            <version>${jna-posix.version}</version>
+        </dependency>
+
+        <dependency>
+            <!-- until we get this version through Stapler -->
+            <groupId>net.sf.json-lib</groupId>
+            <artifactId>json-lib</artifactId>
+            <version>${json-lib.version}</version>
+            <classifier>jdk15</classifier>
+        </dependency>
+        <dependency>
+            <groupId>args4j</groupId>
+            <artifactId>args4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.hudson</groupId>
+            <artifactId>annotation-indexer</artifactId>
+            <version>${annotation-indexer.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.hudson</groupId>
+            <artifactId>task-reactor</artifactId>
+            <version>${task-reactor.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.localizer</groupId>
+            <artifactId>localizer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.thoughtworks.xstream</groupId>
+            <artifactId>xstream</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xpp3_min</artifactId>
+                    <groupId>xpp3</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>xmlpull</artifactId>
+                    <groupId>xmlpull</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <!-- hudson now uses this directly -->
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang.version}</version>
+        </dependency>
+        <dependency><!-- Not used by Hudson, kept for plugin compatibility -->
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.4</version>
+        </dependency>
+
+        <dependency><!-- Left for backward compatibility-->
+            <groupId>commons-digester</groupId>
+            <artifactId>commons-digester</artifactId>
+            <version>1.7</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-digester3</artifactId>
+            <version>${commons-digester.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <!--
+               The version included in the transitive dependency doesn't have the source zip,
+               so explicitly using the newer version.
+            -->
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons-beanutils.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax-mail.version}</version>
+        </dependency>
+
+        <!-- Switch to xercesImpl 2.8.1 - Eclipse approved -->
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>${xerces.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hudsonci.stapler</groupId>
+            <artifactId>commons-jelly</artifactId>
+            <version>${commons-jelly.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.hudsonci.xpath</groupId>
+                    <artifactId>xpath-service</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hudsonci.xpath</groupId>
+            <artifactId>xpath-service</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-jelly</groupId>
+            <artifactId>commons-jelly-tags-fmt</artifactId>
+            <version>${commons-jelly-tags-fmt.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-jelly</groupId>
+                    <artifactId>commons-jelly</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-jelly</groupId>
+                    <artifactId>commons-jelly-tags-junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hudsonci.stapler</groupId>
+            <artifactId>commons-jelly-tags-xml</artifactId>
+            <version>${commons-jelly-tags-xml.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jvnet.hudson</groupId>
+                    <artifactId>commons-jelly</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-jexl</groupId>
+                    <artifactId>commons-jexl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-jelly</groupId>
+                    <artifactId>commons-jelly-tags-junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jvnet.hudson</groupId>
+            <artifactId>commons-jelly-tags-define</artifactId>
+            <version>${commons-jelly-tags-define.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-cli</groupId>
+                    <artifactId>commons-cli</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jvnet.hudson</groupId>
+                    <artifactId>commons-jelly</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-jexl</artifactId>
+            <version>${commons-jexl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency><!-- Hudson core doesn't use it but HUDSON-3811 requires us to put it. -->
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-dao</artifactId>
+            <version>${spring-dao.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-acl</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency><!-- needed by Jelly -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${commons-logging.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${guava.groupid}</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!--
+        | these are now optional in commons-logging:1.1.1,
+        | keeping them around in case any plugins use them
+        -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!--
+        | ^ end of optional commons-logging dependencies
+        -->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.jmdns</groupId>
+            <artifactId>jmdns</artifactId>
+            <version>${jmdns.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.winsw</groupId>
+            <artifactId>winsw</artifactId>
+            <version>${winsw.version}</version>
+            <classifier>bin</classifier>
+            <type>exe</type>
+            <scope>provided</scope>
+            <!-- this isn't really a dependency that Maven should care about, so putting 'provided' -->
+        </dependency>
+        <dependency>
+            <groupId>net.java.sezpoz</groupId>
+            <artifactId>sezpoz</artifactId>
+            <version>${sezpoz.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>xpp3</groupId>
+            <artifactId>xpp3</artifactId>
+            <version>${xpp3.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>xmlpull</artifactId>
+            <groupId>xmlpull</groupId>
+            <version>${xmlpull.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-easymock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jvnet.hudson</groupId>
+            <artifactId>test-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <!--
+              Hudson core doesn't depend on it but some plugin wants
+              the latest version. Bundling 1.4 until we figure out a mechanism to let plugins load its own
+            -->
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- with this, stapler can load parameter names from the debug info -->
+            <groupId>asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>${asm-all.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jtidy</groupId>
+            <artifactId>jtidy</artifactId>
+            <version>${jtidy.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr-runtime</artifactId>
+            <version>${antlr.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>antlr</groupId>
+                    <artifactId>antlr</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.hudson.stapler</groupId>
+            <artifactId>stapler-jelly</artifactId>
+            <version>${stapler.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-jelly</groupId>
+                    <artifactId>commons-jelly</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jvnet.hudson</groupId>
+                    <artifactId>commons-jelly</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-jexl</groupId>
+                    <artifactId>commons-jexl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.kohsuke.stapler</groupId>
+                    <artifactId>json-lib</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>jsr305</artifactId>
+                    <groupId>com.google.code.findbugs</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>metainf-services</artifactId>
+                    <groupId>org.kohsuke.metainf-services</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+            <artifactId>owasp-java-html-sanitizer</artifactId>
+            <version>r173</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+</project>

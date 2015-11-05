@@ -1,0 +1,22 @@
+package com.zoll.sgj.main;
+
+import com.zoll.sgj.map.node.Point;
+import com.zoll.sgj.map.road.Way;
+import com.zoll.sgj.tools.range.Ranger;
+
+public class TowerDefenseMain {
+	public static void main(String[] args) {
+		Point a = new Point(0, 0);
+		Point b = new Point(300, 800);
+		
+		System.out.println(Ranger.rangeOf(a, b));
+		
+		Point w1 = new Point(5, 7);
+		Point w2 = new Point(5, 4);
+		Point w3 = new Point(9, 4);
+		Point w4 = new Point(9, 8);
+		
+		Way way = new Way(w1,w2,w3,w4);
+		way.painWay();
+	} 
+}

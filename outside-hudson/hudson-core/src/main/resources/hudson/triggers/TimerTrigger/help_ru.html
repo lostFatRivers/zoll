@@ -1,0 +1,33 @@
+<!-- **************************************************************************
+#
+# Copyright (C) 2004-2011 Oracle Corporation
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#         Kohsuke Kawaguchi, Anton Kozak, Duncan Mills
+#
+#************************************************************************** -->
+
+<div>
+  Предоставляет <a href="http://en.wikipedia.org/wiki/cron">cron</a> сходную возможность
+  для периодического выполнения сборки этого проекта.
+
+  <p>
+  Эта функция первично предназначена для использования как замена планировщику (cron),
+  и она <b>не идеальна для непрерывной сборки проектов (continuously building software jobs)</b>.
+
+  Когда люди впервые начинают использовать непрерывную интеграцию, они часто используют идею регулярно запланированных
+  сборок наподобие ночных/недельных и используют для этого эту функцию. Тем не менее, главная идея непрерывной интеграции
+  в старте сборки как только произошло изменение для предоставления быстрого предоставления отзыва к произведенному изменению.
+  Для этого Вам необходимо <a href="https://wiki.eclipse.org/Building_a_software_project#Builds_by_changes_in_Subversion.2FCVS">подключить SCM информирование об изменениях к Hudson.</a>.
+
+  <p>
+  Таким образом, перед использованием этой функции, остановитесь и спросите себя действительно ли эта функция именно то что Вам необходимо.
+  <p>
+  Для этого свойства возможно использовать Проектное каскадирование. Детали доступны в <a href="https://www.eclipse.org/hudson/the-hudson-book/book-hudson.chunked/ch06.html#section-common-job-configurations">
+  этом документе</a>.
+</div>
