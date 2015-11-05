@@ -1,0 +1,40 @@
+body {
+	background: #f0f0f0 none repeat scroll 0 0;
+}
+
+#all-dashboard {
+	width: 1480px;
+	height: 760px;
+	margin: 0 auto;
+}
+
+#left-menus {
+	margin: 80px 20px;
+	width: 260px;
+	height: 500px;
+	padding: 50px;
+	float: left;
+}
+
+.filterform {
+	margin: 9px auto;
+}
+
+.filterinput {
+	background-color: rgba(249, 244, 244, 0);
+	border: thin solid #fff;
+	border-radius: 15px;
+	color: #fff;
+	font-weight: bold;
+	height: 30px;
+	text-indent: 0.5em;
+	width: 90%;
+}
+
+#right-view {
+	margin: 130px 10px;
+	width : 1000px;
+	height: 500px;
+	float: left;
+	box-shadow: 0 20px 50px #333;
+}
