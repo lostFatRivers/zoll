@@ -1,0 +1,1111 @@
+<!-- **************************************************************************
+#
+# Copyright (c) 2004-2012 Oracle Corporation.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#    Kohsuke Kawaguchi, Winston Prakash
+#        
+#************************************************************************** --> 
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+        <relativePath /> <!-- avoid cycle -->
+    </parent>
+
+    <groupId>org.eclipse.hudson</groupId>
+    <artifactId>hudson-parent</artifactId>
+    <version>3.3.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>Hudson</name>
+    
+    <description>Hudson Continuous Integration Server</description>
+    
+    <url>http://hudson-ci.org/</url>
+    <inceptionYear>2004</inceptionYear>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License v1.0</name>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/hudson/hudson.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/hudson/hudson.git</developerConnection>
+        <url>https://github.com/hudson/hudson</url>
+    </scm>
+    
+    <organization>
+        <name>Hudson</name>
+        <url>http://hudson-ci.org/</url>
+    </organization>
+
+    <issueManagement>
+        <system>JIRA</system>
+        <url>http://issues.hudson-ci.org</url>
+    </issueManagement>
+
+    <ciManagement>
+        <system>Hudson</system>
+        <url>http://hudson-ci.org/hudson</url>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>Hudson developer discussion list</name>
+            <subscribe>https://dev.eclipse.org/mailman/listinfo/hudson-dev</subscribe>
+            <unsubscribe>https://dev.eclipse.org/mailman/listinfo/hudson-dev</unsubscribe>
+            <post>hudson-dev@eclipse.org</post>
+            <archive>http://dev.eclipse.org/mhonarc/lists/hudson-dev/</archive>
+        </mailingList>
+    </mailingLists>
+    
+    <repositories>
+        <repository>
+            <id>sonatype-nexus-releases</id>
+            <name>Sonatype Nexus Releases</name>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>  
+    </repositories>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>sonatype-nexus-releases</id>
+            <name>Sonatype Nexus Releases</name>
+            <url>https://oss.sonatype.org/content/repositories/releases/</url>
+        </pluginRepository>
+        
+        <pluginRepository>
+            <id>eclipse-maven</id>
+            <url>https://repo.eclipse.org/content/repositories/releases/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <properties>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+        <build.timestamp>${maven.build.timestamp}</build.timestamp>
+        <build.number />
+
+        <cbi-plugins.version>1.0.5</cbi-plugins.version>
+        
+        <jetty.server.version>9.2.10.v20150310</jetty.server.version>
+        <jetty.javax.serverlet.version>3.1.0</jetty.javax.serverlet.version>
+        
+        <maven-hpi-plugin.version>3.0.3</maven-hpi-plugin.version>
+        <stapler.version>3.0.3</stapler.version>
+        <maven-stapler-plugin.version>3.0.2</maven-stapler-plugin.version>
+
+        <!--GWT properties-->
+        <gwt.draftCompile>false</gwt.draftCompile>
+        <gwt.style>OBFUSCATED</gwt.style>
+        <gwt.compiler.optimizationLevel>9</gwt.compiler.optimizationLevel>
+        <gwt.compiler.strict>true</gwt.compiler.strict>
+
+        <!--Libraries-->
+        <localizer.version>1.10</localizer.version>
+        <aspectj.version>1.8.0</aspectj.version>
+        <sisuGuice.version>3.0.3</sisuGuice.version>
+        <sisuInject.version>2.2.3</sisuInject.version>
+   
+        <wagon-http.version>1.0-beta-7</wagon-http.version>
+        <test-annotations.version>1.0</test-annotations.version>
+        <servlet-api.version>2.4</servlet-api.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <logback-classic.version>0.9.28</logback-classic.version>
+        <guava.version>14.0.1</guava.version>
+        <guava.groupid>com.google.guava</guava.groupid>
+        <!--guava.groupid>org.hudsonci.lib</guava.groupid-->
+        <ant.version>1.8.2</ant.version>
+        <xstream.version>1.4.8</xstream.version>
+        <jsr305.version>1.3.9</jsr305.version>
+        <commons-lang.version>3.4</commons-lang.version>
+        <commons-io.version>2.0.1</commons-io.version>
+        <commons-codec.version>1.4</commons-codec.version>
+        <aether.version>1.11</aether.version>
+        <args4j.version>2.0.16</args4j.version>
+        <groovy.version>1.8.1</groovy.version>
+        <jaxb-api.version>2.2.2</jaxb-api.version>
+        <xerces.version>2.8.1</xerces.version>
+
+        <!--Backward compatible properties-->
+        <aspectjVersion>${aspectj.version}</aspectjVersion>
+        <sisuGuiceVersion>${sisuGuice.version}</sisuGuiceVersion>
+        <sisuInjectVersion>${sisuInject.version}</sisuInjectVersion>
+
+        <!--Plugins-->
+        <maven-antrun-extended-plugin.version>1.42</maven-antrun-extended-plugin.version>
+        <maven-hudson-dev-plugin.version>6.1.7-hudson-1</maven-hudson-dev-plugin.version>
+        <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
+        <aspectj-maven-plugin.version>1.6</aspectj-maven-plugin.version>
+        <gwt-maven-plugin.version>2.3.0-1</gwt-maven-plugin.version>
+        <plexus-component-metadata-plugin.version>1.5.4</plexus-component-metadata-plugin.version>
+        <maven-jaxb2-plugin.version>0.7.4</maven-jaxb2-plugin.version>
+        <maven-enunciate-plugin.version>1.26.2</maven-enunciate-plugin.version>
+        <cobertura-maven-plugin.version>2.5.1</cobertura-maven-plugin.version>
+        
+        <hudson-remoting.version>3.0.3</hudson-remoting.version>
+        
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- by default only check remote repositories once per week -->
+        <maven.repository.update.freqency>interval:10080</maven.repository.update.freqency>
+
+        <!--Maven Plugins versions-->
+        <maven-pmd-plugin.version>2.5</maven-pmd-plugin.version>
+        <maven-release-plugin.version>2.1</maven-release-plugin.version>
+        <maven-remote-resources-plugin.version>1.1</maven-remote-resources-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-enforcer-plugin.version>1.0</maven-enforcer-plugin.version>
+        <maven-deploy-plugin.version>2.5</maven-deploy-plugin.version>
+        <maven-install-plugin.version>2.3.1</maven-install-plugin.version>
+        <maven-javadoc-plugin.version>2.6.1</maven-javadoc-plugin.version>
+        <maven-jar-plugin.version>2.3.1</maven-jar-plugin.version>
+        <maven-surefire-plugin.version>2.8.1</maven-surefire-plugin.version>
+        <maven-dependency-plugin.version>2.2</maven-dependency-plugin.version>
+        <maven-assembly-plugin.version>2.2</maven-assembly-plugin.version>
+        <maven-resources-plugin.version>2.4.3</maven-resources-plugin.version>
+        <maven-checkstyle-plugin.version>2.5</maven-checkstyle-plugin.version>
+        <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
+        <findbugs-maven-plugin.version>2.3.1</findbugs-maven-plugin.version>
+        <maven-localizer-plugin.version>1.10</maven-localizer-plugin.version>
+
+        <!--Test dependencies-->
+        <junit.version>4.8.1</junit.version>
+        <easymock.version>3.0</easymock.version>
+        <mockito-core.version>1.8.5</mockito-core.version>
+        <powermock.version>1.4.10</powermock.version>
+        
+        <staplerFork>true</staplerFork>
+        
+        <!--Libraries-->
+        <crypto-util.version>1.0</crypto-util.version>
+        <jtidy.version>4aug2000r7-dev</jtidy.version>
+        <jna-posix.version>1.0.3</jna-posix.version>
+        <json-lib.version>2.4</json-lib.version>
+        <annotation-indexer.version>1.2</annotation-indexer.version>
+        <task-reactor.version>1.2</task-reactor.version>
+        <antlr.version>3.4</antlr.version>
+        <commons-digester.version>3.0</commons-digester.version>
+        <commons-beanutils.version>1.8.0</commons-beanutils.version>
+        <commons-jelly.version>1.1-hudson-20120704</commons-jelly.version>
+        <commons-jelly-tags-fmt.version>1.0</commons-jelly-tags-fmt.version>
+        <commons-jelly-tags-xml.version>1.1-hudson-20120704</commons-jelly-tags-xml.version>
+        <commons-jelly-tags-define.version>1.0.1-hudson-20071021</commons-jelly-tags-define.version>
+        <commons-jexl.version>2.0.1</commons-jexl.version>
+        <commons-logging.version>1.1.1</commons-logging.version>
+        <commons-collections.version>3.2</commons-collections.version>
+        <javax-mail.version>1.4.4</javax-mail.version>
+        <jaxen.version>1.1.3</jaxen.version>
+        <spring-security.version>3.2.1.RELEASE</spring-security.version>
+        <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
+        <spring.version>3.2.8.RELEASE</spring.version>
+        <spring-dao.version>2.0.8</spring-dao.version>
+        <xpp3.version>1.1.4c</xpp3.version>
+        <xmlpull.version>1.1.3.4d_b4_min</xmlpull.version>
+        <jstl.version>1.1.0</jstl.version>
+        <log4j.version>1.2.13</log4j.version>
+        <logkit.version>2.0</logkit.version>
+        <jmdns.version>3.4.0</jmdns.version>
+        <winsw.version>1.9</winsw.version>
+        <sezpoz.version>1.9</sezpoz.version>
+        <asm-all.version>2.2.3</asm-all.version>
+
+        <!--Plugins-->
+        <maven-encoding-plugin.version>1.1</maven-encoding-plugin.version>
+        <apt-maven-plugin.version>1.0-alpha-2</apt-maven-plugin.version>
+        <maven-project-info-reports-plugin.version>2.1</maven-project-info-reports-plugin.version>
+    </properties>
+
+    <modules>
+        <module>hudson-test-utils</module>
+        <module>hudson-utils</module>
+        <module>hudson-cli</module>
+        <module>hudson-core</module>
+        <module>hudson-inject</module>
+        <module>hudson-plugin-utils</module>
+        <module>hudson-service</module>
+        <module>hudson-jetty-war-executable</module>
+        <module>hudson-war</module>
+        <module>hudson-test-framework</module>
+        <module>hudson-plugin-parent</module>
+    </modules>
+
+    <build>
+        
+        <defaultGoal>install</defaultGoal>
+        
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-remote-resources-plugin</artifactId>
+                    <version>${maven-remote-resources-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>${maven-enforcer-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${maven-deploy-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>${maven-install-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${maven-javadoc-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>${maven-jar-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                    <configuration>
+                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <systemPropertyVariables>
+                            <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
+                        </systemPropertyVariables>
+                        <forkMode>always</forkMode>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>${maven-dependency-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${maven-pmd-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${maven-checkstyle-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>${maven-war-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>findbugs-maven-plugin</artifactId>
+                    <version>${findbugs-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.localizer</groupId>
+                    <artifactId>maven-localizer-plugin</artifactId>
+                    <version>${maven-localizer-plugin.version}</version>
+                    <configuration>
+                        <fileMask>Messages.properties</fileMask>
+                        <outputDirectory>${project.build.directory}/generated-sources/localizer</outputDirectory>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.eclipse.hudson.tools</groupId>
+                    <artifactId>maven-hpi-plugin</artifactId>
+                    <version>${maven-hpi-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.hudson.tools</groupId>
+                    <artifactId>maven-hpi-plugin</artifactId>
+                    <version>${maven-hpi-plugin.version}</version>
+                    <configuration>
+                        <showDeprecation>true</showDeprecation>
+                    </configuration>
+                </plugin>
+                
+
+               <!--TODO TEXT. This plugin's configuration is used in m2e only. -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.jvnet.localizer</groupId>
+                                        <artifactId>maven-localizer-plugin</artifactId>
+                                        <versionRange>[1.10,)</versionRange>
+                                        <goals>
+                                            <goal>generate</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-enforcer-plugin</artifactId>
+                                        <versionRange>[1.0,)</versionRange>
+                                        <goals>
+                                            <goal>display-info</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+                                        <artifactId>maven-antrun-extended-plugin</artifactId>
+                                        <versionRange>[1.39,)</versionRange>
+                                        <goals>
+                                            <goal>run</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.maven.plugins</groupId>
+                                        <artifactId>maven-dependency-plugin</artifactId>
+                                        <versionRange>[2.1,)</versionRange>
+                                        <goals>
+                                            <goal>list</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+             
+
+                <plugin>
+                    <groupId>org.jvnet.maven-antrun-extended-plugin</groupId>
+                    <artifactId>maven-antrun-extended-plugin</artifactId>
+                    <version>${maven-antrun-extended-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <!--
+                        Both test harness and core uses stapler as an extension,
+                        and apparently without having extension preloaded at the parent, the main artifact of the 'test' module
+                        ends up installed with 'stapler-jar' extension (which normally is an indication that the ArtifactTypeHandler
+                        defined in this extension is not getting picked up.)
+
+                        To avoid this problem, I'm defining an extension here. Not sure if the nested <dependencies> is necessary.
+                        It's also possible that I misdiagnosed the problem and the root cause is something entirely different.
+
+                        To test if you can remove this work around, do a rebuild from main and see if the test harness
+                        is installed with the right extension into the local repository.
+                    -->
+                    <groupId>org.hudsonci.stapler</groupId>
+                    <artifactId>maven-stapler-plugin</artifactId>
+                    <version>${maven-stapler-plugin.version}</version>
+                    <extensions>true</extensions>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.jvnet.maven-jellydoc-plugin</groupId>
+                            <artifactId>maven-jellydoc-plugin</artifactId>
+                            <version>1.4</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                
+                <!-- this is really just a patched version of maven-jetty-plugin to workaround issue #932 -->
+                <plugin>
+                    <groupId>org.jvnet.hudson.tools</groupId>
+                    <artifactId>maven-hudson-dev-plugin</artifactId>
+                    <version>${maven-hudson-dev-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <version>${build-helper-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>aspectj-maven-plugin</artifactId>
+                    <version>${aspectj-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.aspectj</groupId>
+                            <artifactId>aspectjtools</artifactId>
+                            <version>${aspectj.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <Xlint>ignore</Xlint>
+                        <XaddSerialVersionUID>true</XaddSerialVersionUID>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>gwt-maven-plugin</artifactId>
+                    <version>${gwt-maven-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-component-metadata</artifactId>
+                    <version>${plexus-component-metadata-plugin.version}</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jvnet.jaxb2.maven2</groupId>
+                    <artifactId>maven-jaxb2-plugin</artifactId>
+                    <version>${maven-jaxb2-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <extension>true</extension>
+                                <schemaDirectory>src/main/schema</schemaDirectory>
+                                <plugins>
+                                    <plugin>
+                                        <groupId>org.eclipse.hudson</groupId>
+                                        <artifactId>hudson-jaxb-xjc</artifactId>
+                                    </plugin>
+                                </plugins>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.enunciate</groupId>
+                    <artifactId>maven-enunciate-plugin</artifactId>
+                    <version>${maven-enunciate-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>assemble</goal>
+                            </goals>
+                            <configuration>
+                                <forceWarPackaging>false</forceWarPackaging>
+                                <configFile>enunciate.xml</configFile>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>display-info</goal>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>[1.7.0,]</version>
+                                </requireJavaVersion>
+                                <requireMavenVersion>
+                                    <version>[3.0.0,]</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <!-- enable release profile during the release, create IPS package, and sign bits. -->
+                    <prepareVerifyArgs>-P release,sign</prepareVerifyArgs>
+                    <goals>-DskipTests javadoc:javadoc deploy javadoc:aggregate</goals>
+                    <pushChanges>false</pushChanges>
+                    <localCheckout>true</localCheckout>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <resourceBundles>
+                                <resourceBundle>org.jvnet.hudson:license:1.0</resourceBundle>
+                            </resourceBundles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <!--
+                Since some developers try to run hudson-dev:run from main, define it here so that at least the plugin resolves.
+                This enables us to report a better error message.
+                -->
+                <groupId>org.jvnet.hudson.tools</groupId>
+                <artifactId>maven-hudson-dev-plugin</artifactId>
+            </plugin>
+        </plugins>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-http</artifactId>
+                <version>${wagon-http.version}</version>
+            </extension>
+        </extensions>
+    </build>
+
+    <dependencies>
+    </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jvnet.hudson</groupId>
+                <artifactId>test-annotations</artifactId>
+                <version>${test-annotations.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jvnet.localizer</groupId>
+                <artifactId>localizer</artifactId>
+                <version>${localizer.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>${servlet-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>log4j-over-slf4j</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-classic.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>${guava.groupid}</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sonatype.sisu</groupId>
+                <artifactId>sisu-guice</artifactId>
+                <version>${sisuGuice.version}</version>
+                <classifier>no_aop</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.sonatype.sisu</groupId>
+                        <artifactId>sisu-guava</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.sonatype.sisu</groupId>
+                <artifactId>sisu-inject-bean</artifactId>
+                <version>${sisuInject.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant.version}</version>
+            </dependency>  
+            
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant-launcher</artifactId>
+                <version>${ant.version}</version>
+            </dependency>   
+
+            <dependency>
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>${xstream.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.sonatype.aether</groupId>
+                <artifactId>aether-util</artifactId>
+                <version>${aether.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>args4j</groupId>
+                <artifactId>args4j</artifactId>
+                <version>${args4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency> 
+
+            <!--unit tests -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito-core.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.easymock</groupId>
+                <artifactId>easymock</artifactId>
+                <version>${easymock.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-easymock</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+                <optional>true</optional>
+            </dependency>
+
+            <!-- INTERNAL -->
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-test-utils</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-utils</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-core</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-inject</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-inject</artifactId>
+                <classifier>tests</classifier>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-service</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-plugin-utils</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-cli</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-cli</artifactId>
+                <classifier>jar-with-dependencies</classifier>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-war</artifactId>
+                <type>war</type>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.hudson</groupId>
+                <artifactId>hudson-test-framework</artifactId>
+                <version>3.3.1-SNAPSHOT</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>metrics</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <configuration>
+                            <threshold>High</threshold>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <configuration>
+                            <!--rulesets>
+                            <ruleset>ruleset.xml</ruleset>
+                            </rulesets-->
+                            <targetJdk>1.7</targetJdk>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                        <configuration>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+
+        <profile>
+            <!-- FIXME: This is an ineffective use of a default activated profile. -->
+            <id>debug</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <hudson.sign.alias>hudson</hudson.sign.alias>
+                <hudson.sign.keystore>../dummy.keystore</hudson.sign.keystore>
+                <hudson.sign.storepass>hudson</hudson.sign.storepass>
+
+                <!-- GWT development properties -->
+                <gwt.draftCompile>true</gwt.draftCompile>
+                <gwt.style>PRETTY</gwt.style>
+                <gwt.compiler.optimizationLevel>-1</gwt.compiler.optimizationLevel>
+                <gwt.compiler.strict>false</gwt.compiler.strict>
+                <gwt.user.agent>safari</gwt.user.agent>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>sorcerer</id>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jvnet.sorcerer</groupId>
+                        <artifactId>maven-sorcerer-plugin</artifactId>
+                        <version>0.8</version>
+                    </plugin>
+                </plugins>
+            </reporting>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jvnet.sorcerer</groupId>
+                        <artifactId>maven-sorcerer-plugin</artifactId>
+                        <version>0.8</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>m2e</id>
+            <activation>
+                <property>
+                    <name>m2e.version</name>
+                </property>
+            </activation>
+            <properties>
+                <m2BuildDirectory>target</m2BuildDirectory>
+            </properties>
+            <build>
+                <directory>${m2BuildDirectory}</directory>
+                <plugins>
+                    <plugin>
+                        <groupId>org.maven.ide.eclipse</groupId>
+                        <artifactId>lifecycle-mapping</artifactId>
+                        <version>0.12.0</version>
+                        <configuration>
+                            <mappingId>customizable</mappingId>
+                            <configurators>
+                                <configurator id="org.maven.ide.eclipse.jdt.javaConfigurator" />
+                                <configurator id="org.maven.ide.eclipse.plexus.annotations.plexusConfigurator" />
+                            </configurators>
+                            <mojoExecutions>
+                                <mojoExecution>org.apache.maven.plugins:maven-resources-plugin::</mojoExecution>
+                            </mojoExecutions>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <property>
+                    <name>it</name>
+                </property>
+            </activation>
+       
+            <!--TODO find better solution to use properties for hudson-remoting-->
+            <properties>
+                <hudson.sign.alias>hudson</hudson.sign.alias>
+                <hudson.sign.keystore>../dummy.keystore</hudson.sign.keystore>
+                <hudson.sign.storepass>hudson</hudson.sign.storepass>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>hudson</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <version>${cobertura-maven-plugin.version}</version>
+                            <configuration>
+                                <check>
+                                    <branchRate>80</branchRate>
+                                    <lineRate>80</lineRate>
+                                    <haltOnFailure>true</haltOnFailure>
+                                    <totalBranchRate>80</totalBranchRate>
+                                    <totalLineRate>80</totalLineRate>
+                                    <packageLineRate>80</packageLineRate>
+                                    <packageBranchRate>80</packageBranchRate>
+                                </check>
+                                <formats>
+                                    <format>xml</format>
+                                </formats>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <phase>package</phase>
+                                    <goals>
+                                        <goal>cobertura</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
+        <profile>
+            <id>eclipse-sign</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.cbi.maven.plugins</groupId>
+                        <artifactId>eclipse-jarsigner-plugin</artifactId>
+                        <version>${cbi-plugins.version}</version>
+                        <executions>
+                            <execution>
+                                <id>sign</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

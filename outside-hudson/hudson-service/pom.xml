@@ -1,0 +1,73 @@
+<!-- **************************************************************************
+#
+# Copyright (c) 2010-2012 Sonatype, Inc.
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors: 
+#
+#   Jason Dillon, Winston Prakash 
+#        
+#************************************************************************** --> 
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.eclipse.hudson</groupId>
+    <artifactId>hudson-parent</artifactId>
+    <version> 3.3.1-SNAPSHOT</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>hudson-service</artifactId>
+  <version>3.3.1-SNAPSHOT</version>
+  <name>Hudson :: Service</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hudson-plugin-utils</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>hudson-test-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>aspectj-maven-plugin</artifactId>
+        <configuration>
+          <aspectLibraries>
+            <aspectLibrary>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>hudson-inject</artifactId>
+            </aspectLibrary>
+          </aspectLibraries>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>hudson</id>
+      <build>
+        <plugins>
+           <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+               <artifactId>cobertura-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

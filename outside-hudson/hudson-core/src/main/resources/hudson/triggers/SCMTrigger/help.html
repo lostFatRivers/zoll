@@ -1,0 +1,26 @@
+<!-- **************************************************************************
+#
+# Copyright (C) 2004-2011 Oracle Corporation
+#
+# All rights reserved. This program and the accompanying materials
+# are made available under the terms of the Eclipse Public License v1.0
+# which accompanies this distribution, and is available at
+# http://www.eclipse.org/legal/epl-v10.html
+#
+# Contributors:
+#         Kohsuke Kawaguchi, Anton Kozak, Duncan Mills
+#
+#************************************************************************** -->
+
+<div>
+  Configure Hudson to poll changes in SCM.
+
+  <p>
+  Note that this is going to be an expensive operation if you poll frequently enough
+  to trigger timely builds; or it is going to be slow to respond to changes.
+  Consider setting up a Git post-receive hook to avoid this overhead, as described in
+  <a href="https://wiki.eclipse.org/Using_Hudson/Building_a_software_project#Builds_by_changes_in_Git">this document</a>
+  <p>
+  It's possible to use Job cascading feature for this property. Please review <a href="https://www.eclipse.org/hudson/the-hudson-book/book-hudson.chunked/ch06.html#section-common-job-configurations">
+  this document</a>.
+</div>
