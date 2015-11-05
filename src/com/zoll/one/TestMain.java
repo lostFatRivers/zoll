@@ -1,14 +1,18 @@
 package com.zoll.one;
 
-import com.zoll.one.test.Good;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TestMain {
 	public static void main(String[] args) {
-		System.out.print("Hello world!");
-		System.out.println("aaaaa");
-		System.out.println(12);
-		Good.getId();
-		Good.getId();
-		Good.getId();
+		Integer in = getNext();
+		if (in == null) {
+			System.out.println("ddssdds");
+		}
+	}
+	
+	public static int getNext() {
+		Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+		return map.get(1);
 	}
 }
