@@ -1,0 +1,14 @@
+package com.zoll.battle.role;
+
+/**
+ * 角色接口;
+ * 
+ * @author joker
+ *
+ */
+public interface IRole {
+	/**
+	 * 
+	 */
+	public void doAction();
+}

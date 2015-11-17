@@ -1,0 +1,5 @@
+package com.zoll.battle.action;
+
+public interface IAction {
+	
+}
