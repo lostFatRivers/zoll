@@ -1,0 +1,9 @@
+package com.zoll.view;
+
+import javax.swing.JFrame;
+
+public class SwingConsole {
+	public static void run(final JFrame jf, final int width, final int height) {
+		
+	}
+}
