@@ -17,4 +17,4 @@
 
 > 4. 看看maven和ant的使用区别;
 
-> 5. Hudson源码可以看看了
+> 5. friend invite 系统还没有搞定；
