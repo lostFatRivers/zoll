@@ -7,14 +7,11 @@
 ***
 ### 周计划:
 
-> 1. 继续logback学习好, 项目里替换使用;
+> 1. Mind 代码阅读;
+> 2. Hudson/Jenkins + Gradle 使用;
+> 3. 监控系统怎么做;
+> 4. MongoDB学习;
+> 5. netty学习;
+> 6. 新年计划;  >> important
+> 7. redis学习;
 
-> 2. 学习Mysql性能调优;
-
-> 3. RPC深入学习, 看别人牛逼的代码, 优化自己的;
-
-> 4. Tower demo继续, 设计模式啥的必须用上;
-
-> 4. 看看maven和ant的使用区别;
-
-> 5. friend invite 系统还没有搞定；
