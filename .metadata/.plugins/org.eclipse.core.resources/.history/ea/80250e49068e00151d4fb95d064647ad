@@ -1,7 +1,0 @@
-package com.zoll.view;
-
-import javax.swing.JFrame;
-
-public class ButtonD1 extends JFrame {
-
-}

@@ -1,5 +1,0 @@
-package com.zoll.battle.role;
-
-public interface IRole {
-
-}
